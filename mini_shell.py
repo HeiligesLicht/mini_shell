@@ -2,11 +2,14 @@ import lexer as ssp
 import os, sys, signal, time, re
 jobS =  []
 
+
+# Close all pipes file descriptors
 def kill_pipes(pipes):
     for rfd, wfd in pipes:
         os.close(rfd)
         os.close(wfd)
 
+# Setup file redirections with dup2 and open
 def setup_redir(process):
     if process._redirs is not None:
         
@@ -32,6 +35,7 @@ def setup_redir(process):
                 os.dup2(fd, 0)
                 os.close(fd)
 
+# Setup pipes using dup2 and execute command with args using execvp
 def setup_pipeline(process, rfd, wfd, target, execute=True):
     os.close(rfd)
     os.dup2(wfd, target)
@@ -41,6 +45,7 @@ def setup_pipeline(process, rfd, wfd, target, execute=True):
         sys.stdin.flush()
         os.execvp(process._cmd.getCommand(), [process._cmd.getCommand()] + process._cmd.getArgs())
 
+# Signal: Ctrl-Z handler: Toggle to Background
 def ctrl_z(sig, frame):
     global chld, jobS
     n = jobS.index([chld, "running"])
@@ -48,6 +53,7 @@ def ctrl_z(sig, frame):
     print()
     os.kill(chld, signal.SIGSTOP)
 
+# Signal: Ctrl-Z handler: Terminate
 def ctrl_c(sig, frame):
     global chld
     global ppid
@@ -59,17 +65,21 @@ def ctrl_c(sig, frame):
         print("Hasta la vista, baby.")
         os.kill(ppid, signal.SIGTERM)
 
+## Job Control
 
+# List jobs in background
 def jobs():
     global jobS
     for key, value in jobS:
         print(str(key), "---> " + value)
 
+# Toggle job from foreground to background
 def bg(num = 0):
     global jobS
     jobS[num][1] = "running"
     os.kill(jobS[num][0], signal.SIGCONT)
 
+# Toggle job from background to foreground
 def fg(num = 0):
     global jobS, chld
     pid = os.fork()
@@ -82,13 +92,13 @@ def fg(num = 0):
         os.kill(jobS[num][0], signal.SIGCONT)
         signal.pause() 
 
-ctrl_quit = ctrl_c
-
+ctrl_quit = ctrl_c # The two are the same.
 
 print("Bonjour, Hello, 你好, Здравствуйте, こんにちは.")
 
 ppid = os.getpid()
 
+# shell's main loop.
 while True:
 
     chld = None
