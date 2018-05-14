@@ -7,7 +7,7 @@ This project was part of a Computer-Science course (Université de Nice Sophia-A
 
 _____
 
-mini_shell uses [simple-shell-parser](https://github.com/ntoronto/pict3d) shell parser written by @odalle.
+mini_shell uses [simple-shell-parser](https://github.com/odalle/simple_shell_parser) shell parser written by @odalle.
 
 To install:
 `pip3 install simple-shell-parser`
