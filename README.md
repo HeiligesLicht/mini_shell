@@ -16,7 +16,7 @@ _____
 
 To launch the project:
 ```
-chmod +x mini_shell.py
+chmod u+x mini_shell.py
 ./mini_shell.py
 ```
 
