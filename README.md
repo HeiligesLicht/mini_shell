@@ -23,4 +23,4 @@ chmod +x mini_shell.py
 _____
 
 To-Do:
-[] Make a custom and clean parser.
+- [ ] Make a custom and clean parser.
